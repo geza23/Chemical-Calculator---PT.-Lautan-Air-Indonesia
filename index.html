@@ -48,6 +48,8 @@
     .result {
       margin-top: 10px;
       font-weight: bold;
+      color: red;
+      white-space: pre-line;
     }
   </style>
 </head>
@@ -118,9 +120,9 @@
       const dose2 = t2 ? ((flow2 * dilutionSCI * 1000) / blowdownRate).toFixed(2) : 0;
       const dose3 = t3 ? ((flow3 * 1000) / recirculationRate).toFixed(2) : 0;
 
-      document.getElementById('result1').innerText = `Flow: ${flow1} LPH\\nDosis: ${dose1} ppm`;
-      document.getElementById('result2').innerText = `Flow: ${flow2} LPH\\nDosis: ${dose2} ppm`;
-      document.getElementById('result3').innerText = `Flow: ${flow3} LPH\\nDosis: ${dose3} ppm`;
+      document.getElementById('result1').innerText = `Flow: ${flow1} LPH\nDosis: ${dose1} ppm`;
+      document.getElementById('result2').innerText = `Flow: ${flow2} LPH\nDosis: ${dose2} ppm`;
+      document.getElementById('result3').innerText = `Flow: ${flow3} LPH\nDosis: ${dose3} ppm`;
 
       const zpLevel = parseFloat(document.getElementById('zpLevel').value);
       const sciLevel = parseFloat(document.getElementById('sciLevel').value);
