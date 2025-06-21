@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Monitoring Chemical - WTP MPSI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f5f8fa;
+      color: #333;
+    }
+    header {
+      background-color: #002f6c;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+    }
+    header img {
+      height: 40px;
+      margin-right: 15px;
+    }
+    h1 {
+      font-size: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+    h2 {
+      color: #002f6c;
+      margin-bottom: 10px;
+    }
+    .section {
+      margin-bottom: 30px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input {
+      padding: 8px;
+      margin-top: 4px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .output {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .input-group {
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://seeklogo.com/images/L/lautan-air-indonesia-logo-711F8E2DD6-seeklogo.com.png" alt="Lautan Air Indonesia Logo">
+    <h1>Monitoring Chemical WTP MPSI</h1>
+  </header>
+
+  <div class="container">
+    <div class="section">
+      <h2>Cek Flow dan Dosis Injeksi</h2>
+
+      <!-- ZP 35 -->
+      <div class="input-group">
+        <h3>ZP 35</h3>
+        <label>Volume (ml)</label>
+        <input id="zp_volume" type="number">
+        <label>Waktu (detik)</label>
+        <input id="zp_time" type="number">
+        <div class="output" id="zp_output"></div>
+      </div>
+
+      <!-- SCI -->
+      <div class="input-group">
+        <h3>SCI</h3>
+        <label>Volume (ml)</label>
+        <input id="sci_volume" type="number">
+        <label>Waktu (detik)</label>
+        <input id="sci_time" type="number">
+        <div class="output" id="sci_output"></div>
+      </div>
+
+      <!-- Sodium Hypo -->
+      <div class="input-group">
+        <h3>Sodium Hypo</h3>
+        <label>Volume (ml)</label>
+        <input id="hypo_volume" type="number">
+        <label>Waktu (detik)</label>
+        <input id="hypo_time" type="number">
+        <div class="output" id="hypo_output"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Top Up Chemical ZP 35 dan SCI</h2>
+
+      <!-- ZP 35 -->
+      <div class="input-group">
+        <h3>Top Up ZP 35</h3>
+        <label>Level Tangki Aktual (liter)</label>
+        <input id="zp_level" type="number">
+        <div class="output" id="zp_topup"></div>
+      </div>
+
+      <!-- SCI -->
+      <div class="input-group">
+        <h3>Top Up SCI</h3>
+        <label>Level Tangki Aktual (liter)</label>
+        <input id="sci_level" type="number">
+        <div class="output" id="sci_topup"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const dilutionZP = 0.15;
+    const dilutionSCI = 0.02;
+    const blowdownRate = 36.3; // m3/jam
+    const recirculationRate = 11200; // m3/jam
+
+    function calc() {
+      // ZP 35
+      const v1 = parseFloat(document.getElementById('zp_volume').value) || 0;
+      const t1 = parseFloat(document.getElementById('zp_time').value) || 1;
+      const flow1 = (v1 / t1) * 3.6;
+      const dose1 = (flow1 * dilutionZP * 10000) / (blowdownRate * 1000);
+      document.getElementById('zp_output').innerHTML = `Flow: ${flow1.toFixed(1)} LPH<br>Dosis: ${dose1.toFixed(2)} ppm`;
+
+      // SCI
+      const v2 = parseFloat(document.getElementById('sci_volume').value) || 0;
+      const t2 = parseFloat(document.getElementById('sci_time').value) || 1;
+      const flow2 = (v2 / t2) * 3.6;
+      const dose2 = (flow2 * dilutionSCI * 10000) / (blowdownRate * 1000);
+      document.getElementById('sci_output').innerHTML = `Flow: ${flow2.toFixed(1)} LPH<br>Dosis: ${dose2.toFixed(2)} ppm`;
+
+      // Hypo
+      const v3 = parseFloat(document.getElementById('hypo_volume').value) || 0;
+      const t3 = parseFloat(document.getElementById('hypo_time').value) || 1;
+      const flow3 = (v3 / t3) * 3.6;
+      const dose3 = (flow3 * 1000) / recirculationRate;
+      document.getElementById('hypo_output').innerHTML = `Flow: ${flow3.toFixed(1)} LPH<br>Dosis: ${dose3.toFixed(2)} ppm`;
+    }
+
+    function calcTopup() {
+      const levelZP = parseFloat(document.getElementById('zp_level').value) || 0;
+      const levelSCI = parseFloat(document.getElementById('sci_level').value) || 0;
+      const topupZP = (1000 - levelZP) * dilutionZP;
+      const topupSCI = (1000 - levelSCI) * dilutionSCI;
+      document.getElementById('zp_topup').innerHTML = `Top up yang dibutuhkan: ${topupZP.toFixed(1)} kg`;
+      document.getElementById('sci_topup').innerHTML = `Top up yang dibutuhkan: ${topupSCI.toFixed(1)} kg`;
+    }
+
+    // Listener
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('input', () => {
+        calc();
+        calcTopup();
+      });
+    });
+  </script>
+</body>
+</html>
