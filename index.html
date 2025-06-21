@@ -1,3 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Monitoring Flow, Dosis, dan Top Up Chemical</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      background-color: #002c5f;
+      color: white;
+      padding: 10px 20px;
+    }
+    header img {
+      height: 40px;
+      margin-right: 15px;
+    }
+    h1 {
+      font-size: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin-top: 30px;
+      color: #002c5f;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input {
+      padding: 5px;
+      width: 100%;
+      margin-top: 3px;
+    }
+    .result {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="Lautan Air Indonesia" />
+    <h1>Lautan Air Indonesia - Monitoring Flow, Dosis, dan Top Up Chemical</h1>
+  </header>
+
+  <div class="container">
+    <h2>Cek Flow dan Dosis Injeksi</h2>
+
+    <div>
+      <h3>ZP 35</h3>
+      <label>Volume (ml): <input type="number" id="vol1" /></label>
+      <label>Waktu (detik): <input type="number" id="time1" /></label>
+      <div class="result" id="result1"></div>
+    </div>
+
+    <div>
+      <h3>SCI</h3>
+      <label>Volume (ml): <input type="number" id="vol2" /></label>
+      <label>Waktu (detik): <input type="number" id="time2" /></label>
+      <div class="result" id="result2"></div>
+    </div>
+
+    <div>
+      <h3>Sodium Hypo</h3>
+      <label>Volume (ml): <input type="number" id="vol3" /></label>
+      <label>Waktu (detik): <input type="number" id="time3" /></label>
+      <div class="result" id="result3"></div>
+    </div>
+
+    <h2>Top Up Chemical ZP 35 dan SCI</h2>
+
+    <div>
+      <h3>Top Up ZP 35</h3>
+      <label>Level Tangki Aktual: <input type="number" id="zpLevel" /></label>
+      <div class="result" id="zpTopup"></div>
+    </div>
+
+    <div>
+      <h3>Top Up SCI</h3>
+      <label>Level Tangki Aktual: <input type="number" id="sciLevel" /></label>
+      <div class="result" id="sciTopup"></div>
+    </div>
+  </div>
+
+  <script>
+    const blowdownRate = 36.3;
+    const recirculationRate = 11200;
+    const dilutionZP = 0.15;
+    const dilutionSCI = 0.02;
+
+    function calculate() {
+      const v1 = parseFloat(document.getElementById('vol1').value);
+      const t1 = parseFloat(document.getElementById('time1').value);
+      const v2 = parseFloat(document.getElementById('vol2').value);
+      const t2 = parseFloat(document.getElementById('time2').value);
+      const v3 = parseFloat(document.getElementById('vol3').value);
+      const t3 = parseFloat(document.getElementById('time3').value);
+
+      const flow1 = t1 ? ((v1 / t1) * 3.6).toFixed(1) : 0;
+      const flow2 = t2 ? ((v2 / t2) * 3.6).toFixed(1) : 0;
+      const flow3 = t3 ? ((v3 / t3) * 3.6).toFixed(1) : 0;
+
+      const dose1 = t1 ? ((flow1 * dilutionZP * 1000) / blowdownRate).toFixed(2) : 0;
+      const dose2 = t2 ? ((flow2 * dilutionSCI * 1000) / blowdownRate).toFixed(2) : 0;
+      const dose3 = t3 ? ((flow3 * 1000) / recirculationRate).toFixed(2) : 0;
+
+      document.getElementById('result1').innerText = `Flow: ${flow1} LPH\nDosis: ${dose1} ppm`;
+      document.getElementById('result2').innerText = `Flow: ${flow2} LPH\nDosis: ${dose2} ppm`;
+      document.getElementById('result3').innerText = `Flow: ${flow3} LPH\nDosis: ${dose3} ppm`;
+
+      const zpLevel = parseFloat(document.getElementById('zpLevel').value);
+      const sciLevel = parseFloat(document.getElementById('sciLevel').value);
+
+      const zpTopup = zpLevel ? ((1000 - zpLevel) * 0.15).toFixed(1) : 0;
+      const sciTopup = sciLevel ? ((1000 - sciLevel) * 0.02).toFixed(1) : 0;
+
+      document.getElementById('zpTopup').innerText = `Top up dibutuhkan: ${zpTopup} kg`;
+      document.getElementById('sciTopup').innerText = `Top up dibutuhkan: ${sciTopup} kg`;
+    }
+
+    document.querySelectorAll("input").forEach(input => {
+      input.addEventListener("input", calculate);
+    });
+  </script>
+</body>
+</html>
 
 <!DOCTYPE html>
 <html lang="en">
