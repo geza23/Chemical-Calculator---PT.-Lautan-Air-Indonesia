@@ -54,34 +54,46 @@
       white-space: pre-line;
     }
     .stopwatch {
-      border: 2px solid #002c5f;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
+      background: #002c5f;
+      border-radius: 15px;
+      padding: 20px;
       text-align: center;
+      margin-bottom: 30px;
     }
     .stopwatch h3 {
-      margin-top: 0;
-      color: #002c5f;
+      color: white;
+      font-size: 1.5rem;
     }
     .stopwatch-display {
-      font-size: 3em;
+      font-size: 3.5em;
       font-family: 'Share Tech Mono', monospace;
-      background: #e0e0e0;
-      border-radius: 10px;
-      display: inline-block;
-      padding: 10px 20px;
-      color: #000;
-      margin: 15px 0;
+      background: none;
+      color: white;
+      padding: 10px 0;
+      animation: glow 1s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 5px #ffffff88, 0 0 10px #ffffff44;
+      }
+      to {
+        text-shadow: 0 0 10px #ffffffcc, 0 0 15px #ffffff88;
+      }
     }
     .stopwatch button {
       width: 30%;
-      margin: 5px;
-      font-size: 16px;
-      background-color: #002c5f;
-      color: white;
+      margin: 10px 5px 0 5px;
+      font-size: 1.1rem;
+      background-color: #ffffff;
+      color: #002c5f;
       border: none;
       border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .stopwatch button:hover {
+      background-color: #cce0ff;
     }
   </style>
 </head>
@@ -94,7 +106,7 @@
   <div class="container">
     <div class="stopwatch">
       <h3>⏱ Stopwatch</h3>
-      <div class="stopwatch-display" id="display">00:00:000</div>
+      <div class="stopwatch-display" id="display">00:00:00</div>
       <select id="targetField">
         <option value="time1">Isi ke Waktu ZP 35</option>
         <option value="time2">Isi ke Waktu SCI</option>
@@ -104,121 +116,42 @@
       <button onclick="stopTimer()">Stop</button>
       <button onclick="resetTimer()">Reset</button>
     </div>
-
-    <h2>Cek Flow dan Dosis Injeksi</h2>
-
-    <div>
-      <h3>ZP 35</h3>
-      <label>Volume (ml): <input type="number" id="vol1" /></label>
-      <label>Waktu (detik): <input type="number" id="time1" /></label>
-      <div class="result" id="result1"></div>
-    </div>
-
-    <div>
-      <h3>SCI</h3>
-      <label>Volume (ml): <input type="number" id="vol2" /></label>
-      <label>Waktu (detik): <input type="number" id="time2" /></label>
-      <div class="result" id="result2"></div>
-    </div>
-
-    <div>
-      <h3>Sodium Hypo</h3>
-      <label>Volume (ml): <input type="number" id="vol3" /></label>
-      <label>Waktu (detik): <input type="number" id="time3" /></label>
-      <div class="result" id="result3"></div>
-    </div>
-
-    <h2>Top Up Chemical ZP 35 dan SCI</h2>
-
-    <div>
-      <h3>Top Up ZP 35</h3>
-      <label>Level Tangki Aktual: <input type="number" id="zpLevel" /></label>
-      <div class="result" id="zpTopup"></div>
-    </div>
-
-    <div>
-      <h3>Top Up SCI</h3>
-      <label>Level Tangki Aktual: <input type="number" id="sciLevel" /></label>
-      <div class="result" id="sciTopup"></div>
-    </div>
   </div>
 
   <script>
-    const blowdownRate = 36.3;
-    const recirculationRate = 11200;
-    const dilutionZP = 0.15;
-    const dilutionSCI = 0.02;
-
-    function calculate() {
-      const v1 = parseFloat(document.getElementById('vol1').value);
-      const t1 = parseFloat(document.getElementById('time1').value);
-      const v2 = parseFloat(document.getElementById('vol2').value);
-      const t2 = parseFloat(document.getElementById('time2').value);
-      const v3 = parseFloat(document.getElementById('vol3').value);
-      const t3 = parseFloat(document.getElementById('time3').value);
-
-      const flow1 = t1 ? ((v1 / t1) * 3.6).toFixed(1) : 0;
-      const flow2 = t2 ? ((v2 / t2) * 3.6).toFixed(1) : 0;
-      const flow3 = t3 ? ((v3 / t3) * 3.6).toFixed(1) : 0;
-
-      const dose1 = t1 ? ((flow1 * dilutionZP * 1000) / blowdownRate).toFixed(2) : 0;
-      const dose2 = t2 ? ((flow2 * dilutionSCI * 1000) / blowdownRate).toFixed(2) : 0;
-      const dose3 = t3 ? ((flow3 * 1000) / recirculationRate).toFixed(2) : 0;
-
-      document.getElementById('result1').innerText = `Flow: ${flow1} LPH\nDosis: ${dose1} ppm`;
-      document.getElementById('result2').innerText = `Flow: ${flow2} LPH\nDosis: ${dose2} ppm`;
-      document.getElementById('result3').innerText = `Flow: ${flow3} LPH\nDosis: ${dose3} ppm`;
-
-      const zpLevel = parseFloat(document.getElementById('zpLevel').value);
-      const sciLevel = parseFloat(document.getElementById('sciLevel').value);
-
-      const zpTopup = zpLevel ? ((1000 - zpLevel) * 0.15).toFixed(1) : 0;
-      const sciTopup = sciLevel ? ((1000 - sciLevel) * 0.02).toFixed(1) : 0;
-
-      document.getElementById('zpTopup').innerText = `Top up dibutuhkan: ${zpTopup} kg`;
-      document.getElementById('sciTopup').innerText = `Top up dibutuhkan: ${sciTopup} kg`;
-    }
-
-    document.querySelectorAll("input").forEach(input => {
-      input.addEventListener("input", calculate);
-    });
-
     let stopwatchInterval;
     let startTime;
+    let elapsedTime = 0;
 
     function updateDisplay() {
       const now = new Date().getTime();
       const elapsed = now - startTime;
       const minutes = String(Math.floor((elapsed / 60000) % 60)).padStart(2, '0');
       const seconds = String(Math.floor((elapsed / 1000) % 60)).padStart(2, '0');
-      const milliseconds = String(Math.floor((elapsed % 1000))).padStart(3, '0');
+      const milliseconds = String(Math.floor((elapsed % 1000) / 10)).padStart(2, '0');
       document.getElementById('display').innerText = `${minutes}:${seconds}:${milliseconds}`;
     }
 
     function startTimer() {
       if (stopwatchInterval) return;
-      startTime = new Date().getTime() - (elapsedTime || 0);
-      stopwatchInterval = setInterval(updateDisplay, 50);
+      startTime = new Date().getTime() - elapsedTime;
+      stopwatchInterval = setInterval(updateDisplay, 30);
     }
 
     function stopTimer() {
       clearInterval(stopwatchInterval);
       stopwatchInterval = null;
       const now = new Date().getTime();
-      const elapsed = now - startTime;
-      elapsedTime = elapsed;
-      document.getElementById(document.getElementById('targetField').value).value = (elapsed / 1000).toFixed(2);
-      calculate();
+      elapsedTime = now - startTime;
+      document.getElementById(document.getElementById('targetField').value).value = (elapsedTime / 1000).toFixed(2);
     }
 
     function resetTimer() {
       clearInterval(stopwatchInterval);
       stopwatchInterval = null;
       elapsedTime = 0;
-      document.getElementById('display').innerText = "00:00:000";
+      document.getElementById('display').innerText = "00:00:00";
     }
-
-    let elapsedTime = 0;
   </script>
 </body>
 </html>
