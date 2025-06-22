@@ -48,7 +48,6 @@
     .result {
       margin-top: 10px;
       font-weight: bold;
-      color: darkred;
       white-space: pre-line;
     }
     .stopwatch {
@@ -61,7 +60,7 @@
       font-size: 48px;
       font-family: 'Courier New', Courier, monospace;
       background-color: #002c5f;
-      color: white;
+      color: #00bfff;
       padding: 15px 30px;
       border-radius: 10px;
       margin-bottom: 20px;
@@ -148,46 +147,33 @@
       const v3 = parseFloat(document.getElementById('vol3').value);
       const t3 = parseFloat(document.getElementById('time3').value);
 
-      const res1 = document.getElementById('result1');
-      const res2 = document.getElementById('result2');
-      const res3 = document.getElementById('result3');
+      const flow1 = t1 ? ((v1 / t1) * 3.6).toFixed(1) : 0;
+      const flow2 = t2 ? ((v2 / t2) * 3.6).toFixed(1) : 0;
+      const flow3 = t3 ? ((v3 / t3) * 3.6).toFixed(1) : 0;
 
-      if (v1 && t1) {
-        const flow1 = (v1 / t1) * 3.6;
-        const dose1 = (flow1 * dilutionZP * 100) / blowdownRate;
-        res1.innerText = `Flow: ${flow1.toFixed(1)} LPH\nDosis: ${dose1.toFixed(2)} ppm`;
-      } else {
-        res1.innerText = v1 && !t1 ? "" : (v1 ? "" : "Harap isi Volume (ml) terlebih dahulu");
-      }
+      const dose1 = t1 ? ((flow1 * dilutionZP * 100) / blowdownRate).toFixed(2) : 0;
+      const dose2 = t2 ? ((flow2 * dilutionSCI * 100) / blowdownRate).toFixed(2) : 0;
+      const dose3 = t3 ? ((flow3 * 1000) / recirculationRate).toFixed(2) : 0;
 
-      if (v2 && t2) {
-        const flow2 = (v2 / t2) * 3.6;
-        const dose2 = (flow2 * dilutionSCI * 100) / blowdownRate;
-        res2.innerText = `Flow: ${flow2.toFixed(1)} LPH\nDosis: ${dose2.toFixed(2)} ppm`;
-      } else {
-        res2.innerText = v2 && !t2 ? "" : (v2 ? "" : "Harap isi Volume (ml) terlebih dahulu");
-      }
-
-      if (v3 && t3) {
-        const flow3 = (v3 / t3) * 3.6;
-        const dose3 = (flow3 * 1000) / recirculationRate;
-        res3.innerText = `Flow: ${flow3.toFixed(1)} LPH\nDosis: ${dose3.toFixed(2)} ppm`;
-      } else {
-        res3.innerText = v3 && !t3 ? "" : (v3 ? "" : "Harap isi Volume (ml) terlebih dahulu");
-      }
+      document.getElementById('result1').innerText = `Flow: ${flow1} LPH\nDosis: ${dose1} ppm`;
+      document.getElementById('result2').innerText = `Flow: ${flow2} LPH\nDosis: ${dose2} ppm`;
+      document.getElementById('result3').innerText = `Flow: ${flow3} LPH\nDosis: ${dose3} ppm`;
 
       const zpLevel = parseFloat(document.getElementById('zpLevel').value);
       const sciLevel = parseFloat(document.getElementById('sciLevel').value);
 
-      document.getElementById('zpTopup').innerText = zpLevel ? `Top up dibutuhkan: ${((1000 - zpLevel) * 0.15).toFixed(1)} kg` : "";
-      document.getElementById('sciTopup').innerText = sciLevel ? `Top up dibutuhkan: ${((1000 - sciLevel) * 0.02).toFixed(1)} kg` : "";
+      const zpTopup = zpLevel ? ((1000 - zpLevel) * 0.15).toFixed(1) : 0;
+      const sciTopup = sciLevel ? ((1000 - sciLevel) * 0.02).toFixed(1) : 0;
+
+      document.getElementById('zpTopup').innerText = `Top up dibutuhkan: ${zpTopup} kg`;
+      document.getElementById('sciTopup').innerText = `Top up dibutuhkan: ${sciTopup} kg`;
     }
 
     document.querySelectorAll("input").forEach(input => {
       input.addEventListener("input", calculate);
     });
 
-    // Stopwatch script
+    // Stopwatch
     let timer;
     let startTime;
     let running = false;
