@@ -236,6 +236,19 @@
       elapsedTime = 0;
       document.getElementById('display').innerText = "00:00:00";
     }
+
+    // ✅ Tambahan script untuk PWA - register Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(reg => {
+            console.log('✅ Service Worker terdaftar:', reg.scope);
+          })
+          .catch(err => {
+            console.error('❌ Gagal mendaftarkan Service Worker:', err);
+          });
+      });
+    }
   </script>
 </body>
 </html>
