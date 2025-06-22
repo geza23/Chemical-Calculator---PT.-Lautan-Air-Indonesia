@@ -56,14 +56,27 @@
       padding: 15px;
       border-radius: 8px;
       margin-bottom: 20px;
+      text-align: center;
     }
     .stopwatch h3 {
       margin-top: 0;
       color: #002c5f;
     }
+    .stopwatch-display {
+      font-size: 2em;
+      font-weight: bold;
+      margin: 10px 0;
+      color: #002c5f;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.7; }
+      100% { transform: scale(1); opacity: 1; }
+    }
     .stopwatch button {
       width: auto;
-      margin-right: 10px;
+      margin: 5px;
     }
   </style>
 </head>
@@ -76,13 +89,12 @@
   <div class="container">
     <div class="stopwatch">
       <h3>⏱ Stopwatch</h3>
-      <p id="display">0 detik</p>
+      <div class="stopwatch-display" id="display">00:00</div>
       <select id="targetField">
         <option value="time1">Isi ke Waktu ZP 35</option>
         <option value="time2">Isi ke Waktu SCI</option>
         <option value="time3">Isi ke Waktu Sodium Hypo</option>
-      </select>
-      <br/><br/>
+      </select><br><br>
       <button onclick="startTimer()">Start</button>
       <button onclick="stopTimer()">Stop</button>
       <button onclick="resetTimer()">Reset</button>
@@ -170,7 +182,9 @@
     let elapsedSeconds = 0;
 
     function updateDisplay() {
-      document.getElementById('display').innerText = `${elapsedSeconds} detik`;
+      const minutes = String(Math.floor(elapsedSeconds / 60)).padStart(2, '0');
+      const seconds = String(elapsedSeconds % 60).padStart(2, '0');
+      document.getElementById('display').innerText = `${minutes}:${seconds}`;
     }
 
     function startTimer() {
