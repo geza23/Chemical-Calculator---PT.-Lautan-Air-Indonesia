@@ -40,7 +40,7 @@
       display: block;
       margin-top: 10px;
     }
-    input {
+    input, select, button {
       padding: 5px;
       width: 100%;
       margin-top: 3px;
@@ -51,6 +51,20 @@
       color: red;
       white-space: pre-line;
     }
+    .stopwatch {
+      border: 2px solid #002c5f;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .stopwatch h3 {
+      margin-top: 0;
+      color: #002c5f;
+    }
+    .stopwatch button {
+      width: auto;
+      margin-right: 10px;
+    }
   </style>
 </head>
 <body>
@@ -60,6 +74,20 @@
   </header>
 
   <div class="container">
+    <div class="stopwatch">
+      <h3>⏱ Stopwatch</h3>
+      <p id="display">0 detik</p>
+      <select id="targetField">
+        <option value="time1">Isi ke Waktu ZP 35</option>
+        <option value="time2">Isi ke Waktu SCI</option>
+        <option value="time3">Isi ke Waktu Sodium Hypo</option>
+      </select>
+      <br/><br/>
+      <button onclick="startTimer()">Start</button>
+      <button onclick="stopTimer()">Stop</button>
+      <button onclick="resetTimer()">Reset</button>
+    </div>
+
     <h2>Cek Flow dan Dosis Injeksi</h2>
 
     <div>
@@ -137,6 +165,36 @@
     document.querySelectorAll("input").forEach(input => {
       input.addEventListener("input", calculate);
     });
+
+    let stopwatchInterval;
+    let elapsedSeconds = 0;
+
+    function updateDisplay() {
+      document.getElementById('display').innerText = `${elapsedSeconds} detik`;
+    }
+
+    function startTimer() {
+      if (stopwatchInterval) return;
+      stopwatchInterval = setInterval(() => {
+        elapsedSeconds++;
+        updateDisplay();
+      }, 1000);
+    }
+
+    function stopTimer() {
+      clearInterval(stopwatchInterval);
+      stopwatchInterval = null;
+      const target = document.getElementById('targetField').value;
+      document.getElementById(target).value = elapsedSeconds;
+      calculate();
+    }
+
+    function resetTimer() {
+      clearInterval(stopwatchInterval);
+      stopwatchInterval = null;
+      elapsedSeconds = 0;
+      updateDisplay();
+    }
   </script>
 </body>
 </html>
