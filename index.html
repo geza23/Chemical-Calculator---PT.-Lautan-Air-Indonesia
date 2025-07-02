@@ -80,12 +80,8 @@
       animation: glow 1s ease-in-out infinite alternate;
     }
     @keyframes glow {
-      from {
-        text-shadow: 0 0 5px #ffffff88, 0 0 10px #ffffff44;
-      }
-      to {
-        text-shadow: 0 0 10px #ffffffcc, 0 0 15px #ffffff88;
-      }
+      from { text-shadow: 0 0 5px #ffffff88, 0 0 10px #ffffff44; }
+      to { text-shadow: 0 0 10px #ffffffcc, 0 0 15px #ffffff88; }
     }
     .stopwatch button {
       width: 30%;
@@ -116,7 +112,7 @@
       <div class="stopwatch-display" id="display">00:00:00</div>
       <select id="targetField">
         <option value="time1">Isi ke Waktu ZP 35</option>
-        <option value="time2">Isi ke Waktu SCI</option>
+        <option value="time2">Isi ke Waktu NaOH</option>
         <option value="time3">Isi ke Waktu Sodium Hypo</option>
       </select><br><br>
       <button onclick="startTimer()">Start</button>
@@ -134,7 +130,7 @@
     </div>
 
     <div>
-      <h3>SCI</h3>
+      <h3>NaOH</h3>
       <label>Volume (ml): <input type="number" id="vol2" /></label>
       <label>Waktu (detik): <input type="number" id="time2" /></label>
       <div class="result" id="result2"></div>
@@ -147,18 +143,12 @@
       <div class="result" id="result3"></div>
     </div>
 
-    <h2>Top Up Chemical ZP 35 dan SCI</h2>
+    <h2>Top Up Chemical ZP 35</h2>
 
     <div>
       <h3>Top Up ZP 35</h3>
       <label>Level Tangki Aktual: <input type="number" id="zpLevel" /></label>
       <div class="result" id="zpTopup"></div>
-    </div>
-
-    <div>
-      <h3>Top Up SCI</h3>
-      <label>Level Tangki Aktual: <input type="number" id="sciLevel" /></label>
-      <div class="result" id="sciTopup"></div>
     </div>
   </div>
 
@@ -166,7 +156,7 @@
     const blowdownRate = 36.3;
     const recirculationRate = 11200;
     const dilutionZP = 0.15;
-    const dilutionSCI = 0.02;
+    const dilutionNaOH = 1.0; // NaOH murni
 
     function calculate() {
       const v1 = parseFloat(document.getElementById('vol1').value);
@@ -181,7 +171,7 @@
       const flow3 = t3 ? ((v3 / t3) * 3.6).toFixed(1) : 0;
 
       const dose1 = t1 ? ((flow1 * dilutionZP * 1000) / blowdownRate).toFixed(2) : 0;
-      const dose2 = t2 ? ((flow2 * dilutionSCI * 1000) / blowdownRate).toFixed(2) : 0;
+      const dose2 = t2 ? ((flow2 * dilutionNaOH * 1000) / blowdownRate).toFixed(2) : 0;
       const dose3 = t3 ? ((flow3 * 1000) / recirculationRate).toFixed(2) : 0;
 
       document.getElementById('result1').innerText = `Flow: ${flow1} LPH\nDosis: ${dose1} ppm`;
@@ -189,13 +179,9 @@
       document.getElementById('result3').innerText = `Flow: ${flow3} LPH\nDosis: ${dose3} ppm`;
 
       const zpLevel = parseFloat(document.getElementById('zpLevel').value);
-      const sciLevel = parseFloat(document.getElementById('sciLevel').value);
-
       const zpTopup = zpLevel ? ((1000 - zpLevel) * 0.15).toFixed(1) : 0;
-      const sciTopup = sciLevel ? ((1000 - sciLevel) * 0.02).toFixed(1) : 0;
 
       document.getElementById('zpTopup').innerText = `Top up dibutuhkan: ${zpTopup} kg`;
-      document.getElementById('sciTopup').innerText = `Top up dibutuhkan: ${sciTopup} kg`;
     }
 
     document.querySelectorAll("input").forEach(input => {
@@ -237,16 +223,12 @@
       document.getElementById('display').innerText = "00:00:00";
     }
 
-    // ✅ Tambahan script untuk PWA - register Service Worker
+    // ✅ Tambahan script untuk PWA
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('service-worker.js')
-          .then(reg => {
-            console.log('✅ Service Worker terdaftar:', reg.scope);
-          })
-          .catch(err => {
-            console.error('❌ Gagal mendaftarkan Service Worker:', err);
-          });
+          .then(reg => { console.log('✅ Service Worker terdaftar:', reg.scope); })
+          .catch(err => { console.error('❌ Gagal mendaftarkan Service Worker:', err); });
       });
     }
   </script>
